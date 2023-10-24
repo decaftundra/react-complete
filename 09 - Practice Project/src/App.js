@@ -1,16 +1,26 @@
-import logo from './assets/investment-calculator-logo.png';
+import logo from "./assets/investment-calculator-logo.png";
+import { useState } from "react";
+import InvestmentForm from "./components/newInvestment/InvestmentForm";
 
 function App() {
+
+  const [state, setState] = useState({
+    currentSavings: '',
+    yearlyContributions: '',
+    expectedReturn: '',
+    investmentPeriod: '',
+  });
+
   const calculateHandler = (userInput) => {
     // Should be triggered when form is submitted
     // You might not directly want to bind it to the submit event on the form though...
 
     const yearlyData = []; // per-year results
 
-    let currentSavings = +userInput['current-savings']; // feel free to change the shape of this input object!
-    const yearlyContribution = +userInput['yearly-contribution']; // as mentioned: feel free to change the shape...
-    const expectedReturn = +userInput['expected-return'] / 100;
-    const duration = +userInput['duration'];
+    let currentSavings = +userInput.currentSavings; // feel free to change the shape of this input object!
+    const yearlyContribution = +userInput.yearlyContribution; // as mentioned: feel free to change the shape...
+    const expectedReturn = +userInput.expectedReturn / 100;
+    const duration = +userInput.investmentPeriod;
 
     // The below code calculates yearly results (total savings, interest etc)
     for (let i = 0; i < duration; i++) {
@@ -25,7 +35,29 @@ function App() {
       });
     }
 
-    // do something with yearlyData ...
+    console.log("calculateHandler");
+  };
+
+  const resetHandler = () => {
+    console.log("reset");
+    setState({
+      currentSavings: " ",
+      yearlyContributions: " ",
+      expectedReturn: " ",
+      investmentPeriod: " ",
+    });
+  };
+
+  const handleChange = (e) => {
+    console.log("handleChange", e);
+    const { name, value } = e.target;
+    setState({ ...state, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    calculateHandler(state);
+    resetHandler();
   };
 
   return (
@@ -35,7 +67,18 @@ function App() {
         <h1>Investment Calculator</h1>
       </header>
 
-      <form className="form">
+      <InvestmentForm
+        currentSavings={state.currentSavings}
+        yearlyContributions={state.yearlyContributions}
+        expectedReturn={state.expectedReturn}
+        investmentPeriod={state.investmentPeriod}
+        handleChange={handleChange}
+        calculateHandler={calculateHandler}
+        handleSubmit={handleSubmit}
+        resetHandler={resetHandler}
+      />
+
+      {/* <form className="form">
         <div className="input-group">
           <p>
             <label htmlFor="current-savings">Current Savings ($)</label>
@@ -66,7 +109,7 @@ function App() {
             Calculate
           </button>
         </p>
-      </form>
+      </form> */}
 
       {/* Todo: Show below table conditionally (only once result data is available) */}
       {/* Show fallback text if no data is available */}
